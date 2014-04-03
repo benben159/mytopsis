@@ -6,9 +6,10 @@
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A511B1CA-81FB-4F5F-9D09-9CCEBD718FC0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>mytopsis</RootNamespace>
     <AssemblyName>mytopsis</AssemblyName>
+    <StartupObject>mytopsis.EmptyClass</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,5 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EmptyClass.cs" />
+    <Compile Include="MainWindow.cs" />
   </ItemGroup>
 </Project>
