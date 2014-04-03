@@ -15,6 +15,11 @@ namespace mytopsis
 		private List<TextBox> rowHeader;
 		private List<TextBox> columnHeader;
 		private List<List<TextBox>> matrix;
+		private Point offsetRowHeader;
+		private Point offsetColumnHeader;
+		private Point offsetMatrix;
+		private bool isHeaderLocked;
+
 		public MainWindow ()
 		{
 			Text = "mytopsis";
@@ -23,6 +28,10 @@ namespace mytopsis
 			rowHeader = new List<TextBox> ();
 			columnHeader = new List<TextBox> ();
 			matrix = new List<List<TextBox>> ();
+			offsetRowHeader = new Point (20, 120);
+			offsetColumnHeader = new Point (100, 90);
+			offsetMatrix = new Point (100, 110);
+			isHeaderLocked = false;
 			initializeComponents ();
 			bindEvents ();
 			CenterToScreen ();
@@ -57,8 +66,7 @@ namespace mytopsis
 
 		void bindEvents ()
 		{
-			btnGenHdr.Click += (object sender, EventArgs e) => 
-			{
+			btnGenHdr.Click += (object sender, EventArgs e) => {
 				int numcols=0, numrows= 0;
 				try {
 					numrows = int.Parse(txtNumAlt.Text);
@@ -67,13 +75,46 @@ namespace mytopsis
 					MessageBox.Show("invalid input");
 					return;
 				}
+				if (
 				for(int i = 0; i < numrows; i++){
-					// TODO generate text box
+					TextBox newTxt = new TextBox();
+					newTxt.Text = string.Format("R_{0}", i+1);
+					newTxt.Parent = this;
+					newTxt.Location = offsetRowHeader;
+					newTxt.Size = new Size(70, 30);
+					offsetRowHeader.Y += 40;
+					rowHeader.Add(newTxt);
 				}
+
+				for(int i = 0; i < numcols; i++){
+					TextBox newTxt = new TextBox();
+					newTxt.Parent = this;
+					newTxt.Location = offsetColumnHeader;
+					newTxt.Size = new Size(70, 30);
+					newTxt.Text = string.Format("C_{0}", i+1);
+					offsetColumnHeader.X += 80;
+					columnHeader.Add(newTxt);
+				}
+				/*
+				for(int i = 0; i < numrows; i++){
+					for(int j = 0; j < numcols; i++){
+						TextBox element = new TextBox();
+
+					}
+				}*/
+			};
+
+			btnLockHdr.Click += (object sender, EventArgs e) => {
+				isHeaderLocked = !isHeaderLocked;
+				foreach (TextBox t in rowHeader){
+					t.ReadOnly = !t.ReadOnly;
+				}
+				foreach (TextBox t in columnHeader){
+					t.ReadOnly = !t.ReadOnly;
+				}
+				btnLockHdr.Text = isHeaderLocked ? "unlock header" : "lock header";
 			};
 		}
-
-
 
 	}
 }
