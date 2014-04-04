@@ -25,6 +25,7 @@ namespace mytopsis
 		private bool isHeaderLocked;
 
 		private int[][] matrix2;
+		private float[] weights;
 
 		public MainWindow ()
 		{
@@ -152,7 +153,22 @@ namespace mytopsis
 			};
 
 			btnStep1.Click += (object sender, EventArgs e) => {
+				getMatrixValues();
+				int[] divider = new int[columnHeader.Count];
+
 			};
+		}
+
+		private void getMatrixValues() 
+		{
+			weights = new float[columnHeader.Count];
+			for (int i = 0; i < columnHeader.Count; i++)
+				weights [i] = float.Parse (columnHeader [i].Text.Split(new char[]{'|'})[1]);
+
+			matrix2 = new int[columnHeader.Count] [rowHeader.Count];
+			for (int i = 0; i < rowHeader.Count; i++)
+				for (int j = 0; j < columnHeader.Count; j++)
+					matrix2 [i] [j] = int.Parse (matrix [i] [j].Text);
 		}
 	}
 }
