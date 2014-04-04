@@ -12,6 +12,10 @@ namespace mytopsis
 		private TextBox txtNumAttr;
 		private Button btnGenHdr;
 		private Button btnLockHdr;
+		private Button btnStep1;
+		private Button btnStep2;
+		private Button btnStep3;
+		private Button btnStep4;
 		private List<TextBox> rowHeader;
 		private List<TextBox> columnHeader;
 		private List<List<TextBox>> matrix;
@@ -19,6 +23,8 @@ namespace mytopsis
 		private Point offsetColumnHeader;
 		private Point offsetMatrix;
 		private bool isHeaderLocked;
+
+		private int[][] matrix2;
 
 		public MainWindow ()
 		{
@@ -30,7 +36,7 @@ namespace mytopsis
 			matrix = new List<List<TextBox>> ();
 			offsetRowHeader = new Point (20, 120);
 			offsetColumnHeader = new Point (100, 90);
-			offsetMatrix = new Point (100, 110);
+			offsetMatrix = new Point (100, 120);
 			isHeaderLocked = false;
 			initializeComponents ();
 			bindEvents ();
@@ -62,6 +68,26 @@ namespace mytopsis
 			btnLockHdr.Location = new Point (90, 50);
 			btnLockHdr.Size = new Size (80, 30);
 			btnLockHdr.Parent = this;
+			btnStep1 = new Button ();
+			btnStep1.Parent = this;
+			btnStep1.Location = new Point (190, 20);
+			btnStep1.Size = new Size (50, 30);
+			btnStep1.Text = "step 1";
+			btnStep2 = new Button ();
+			btnStep2.Parent = this;
+			btnStep2.Location = new Point (250, 20);
+			btnStep2.Size = new Size (50, 30);
+			btnStep2.Text = "step 2";
+			btnStep3 = new Button ();
+			btnStep3.Parent = this;
+			btnStep3.Location = new Point (310, 20);
+			btnStep3.Size = new Size (50, 30);
+			btnStep3.Text = "step 3";
+			btnStep4 = new Button ();
+			btnStep4.Parent = this;
+			btnStep4.Location = new Point (370, 20);
+			btnStep4.Size = new Size (50, 30);
+			btnStep4.Text = "step 4";
 		}
 
 		void bindEvents ()
@@ -75,7 +101,10 @@ namespace mytopsis
 					MessageBox.Show("invalid input");
 					return;
 				}
-				if (
+				if (rowHeader.Count != 0){
+					MessageBox.Show("clear matrix not implemented yet");
+					return;
+				}
 				for(int i = 0; i < numrows; i++){
 					TextBox newTxt = new TextBox();
 					newTxt.Text = string.Format("R_{0}", i+1);
@@ -95,13 +124,20 @@ namespace mytopsis
 					offsetColumnHeader.X += 80;
 					columnHeader.Add(newTxt);
 				}
-				/*
-				for(int i = 0; i < numrows; i++){
-					for(int j = 0; j < numcols; i++){
-						TextBox element = new TextBox();
 
+				for(int i = 0; i < numrows; i++){
+					List<TextBox> newRow = new List<TextBox>();
+					for(int j = 0; j < numcols; j++){
+						TextBox element = new TextBox();
+						element.Parent = this;
+						element.Size = new Size(70, 30);
+						element.Location = offsetMatrix;
+						offsetMatrix.X += 80;
 					}
-				}*/
+					offsetMatrix.Y += 40;
+					offsetMatrix.X = 100;
+					matrix.Add(newRow);
+				}
 			};
 
 			btnLockHdr.Click += (object sender, EventArgs e) => {
@@ -114,8 +150,10 @@ namespace mytopsis
 				}
 				btnLockHdr.Text = isHeaderLocked ? "unlock header" : "lock header";
 			};
-		}
 
+			btnStep1.Click += (object sender, EventArgs e) => {
+			};
+		}
 	}
 }
 
