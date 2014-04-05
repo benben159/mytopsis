@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
@@ -264,19 +265,18 @@ namespace mytopsis
 			btnStep3.Click += (object sender, EventArgs e) => {
 				positive = new float[columnHeader.Count];
 				negative = new float[columnHeader.Count];
-				float newplus = 0, newminus = 0;
+				float[] r;
 				for (int i = 0; i < columnHeader.Count; i++){
-					for (int j = 0; j < rowHeader.Count; j++){
-						if (columnStatus[i].Checked){
-							newplus = (matrix2[j,i] < newplus) ? matrix2[j,i] : newplus;
-							newminus = (matrix2[j,i] > newminus) ? matrix2[j,i] : newplus;
-						} else {
-							newplus = (matrix2[j,i] > newplus) ? matrix2[j,i] : newplus;
-							newminus = (matrix2[j,i] < newminus) ? matrix2[j,i] : newplus;
-						}
+					r = new float[rowHeader.Count];
+					for (int j = 0; j < rowHeader.Count; j++)
+						r[j] = float.Parse(rowHeader[j].Text);
+					if (columnStatus[i].Checked){
+						positive[i] = r.Min();
+						negative[i] = r.Max();
+					} else {
+						positive[i] = r.Max();
+						negative[i] = r.Min();
 					}
-					positive[i] = newplus;
-					negative[i] = newminus;
 				}
 			};
 		}
