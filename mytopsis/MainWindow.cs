@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections.Generic;
-
+using Mono.Data.Sqlite;
 namespace mytopsis
 {
 	public class MainWindow : Form
@@ -83,7 +83,7 @@ namespace mytopsis
 			btnGenHdr.Size = new Size (80, 30);
 			btnGenHdr.Parent = this;
 			btnLockHdr = new Button ();
-			btnLockHdr.Text = "lock header";
+			btnLockHdr.Text = "lock";
 			btnLockHdr.Location = new Point (90, 50);
 			btnLockHdr.Size = new Size (80, 30);
 			btnLockHdr.Parent = this;
@@ -111,11 +111,6 @@ namespace mytopsis
 			btnStep4.Size = new Size (50, 30);
 			btnStep4.Text = "step 4";
 			btnStep4.Enabled = false;
-			Label lbWeight = new Label ();
-			lbWeight.Text = "Weight";
-			lbWeight.Location = new Point (50, 120);
-			lbWeight.Size = new Size (40, 30);
-			lbWeight.Parent = this;
 		}
 
 		void bindEvents ()
@@ -133,6 +128,11 @@ namespace mytopsis
 					MessageBox.Show("clear matrix not implemented yet");
 					return;
 				}
+				Label lbWeight = new Label ();
+				lbWeight.Text = "Weight";
+				lbWeight.Location = new Point (50, 120);
+				lbWeight.Size = new Size (40, 30);
+				lbWeight.Parent = this;
 				for(int i = 0; i < numrows; i++){
 					TextBox newTxt = new TextBox();
 					newTxt.Text = string.Format("R_{0}", i+1);
@@ -228,11 +228,20 @@ namespace mytopsis
 				foreach (CheckBox c in columnStatus)
 					c.Enabled = !c.Enabled;
 
-				btnLockHdr.Text = isHeaderLocked ? "unlock header" : "lock header";
+				foreach (TextBox t in rowPositive)
+					t.ReadOnly = !t.ReadOnly;
+
+				foreach (TextBox t in rowNegative)
+					t.ReadOnly = !t.ReadOnly;
+
+				btnLockHdr.Text = isHeaderLocked ? "unlock" : "lock";
 				btnStep1.Enabled = !btnStep1.Enabled;
 				btnStep2.Enabled = !btnStep2.Enabled;
 				btnStep3.Enabled = !btnStep3.Enabled;
 				btnStep4.Enabled = !btnStep4.Enabled;
+				foreach (List<TextBox> r in matrix)
+					foreach(TextBox t in r)
+						t.ReadOnly = !t.ReadOnly;
 			};
 
 			btnStep1.Click += (object sender, EventArgs e) => {
@@ -269,7 +278,7 @@ namespace mytopsis
 				for (int i = 0; i < columnHeader.Count; i++){
 					r = new float[rowHeader.Count];
 					for (int j = 0; j < rowHeader.Count; j++)
-						r[j] = float.Parse(rowHeader[j].Text);
+						r[j] = matrixStep2[j,i];
 					if (columnStatus[i].Checked){
 						positive[i] = r.Min();
 						negative[i] = r.Max();
@@ -277,7 +286,13 @@ namespace mytopsis
 						positive[i] = r.Max();
 						negative[i] = r.Min();
 					}
+					rowPositive[i].Text = positive[i].ToString();
+					rowNegative[i].Text = negative[i].ToString();
 				}
+			};
+
+			btnStep4.Click += (object sender, EventArgs e) => {
+				
 			};
 		}
 
