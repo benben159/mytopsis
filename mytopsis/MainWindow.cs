@@ -18,13 +18,17 @@ namespace mytopsis
 		private Button btnStep2;
 		private Button btnStep3;
 		private Button btnStep4;
+		private Button btnStep5;
 		private List<TextBox> rowHeader;
 		private List<TextBox> columnHeader;
 		private List<TextBox> columnWeight;
 		private List<CheckBox> columnStatus;
 		private List<TextBox> rowPositive;
 		private List<TextBox> rowNegative;
+		private List<TextBox> columnSPositive;
+		private List<TextBox> columnSNegative;
 		private List<List<TextBox>> matrix;
+		private List<TextBox> columnC;
 		private Point offsetRowHeader;
 		private Point offsetColumnHeader;
 		private Point offsetColumnWeight;
@@ -35,6 +39,10 @@ namespace mytopsis
 		private float[,] matrix2;
 		private float[,] matrixStep1;
 		private float[,] matrixStep2;
+		private float[,] matrixStep4Positive;
+		private float[,] matrixStep4Negative;
+		private float[] bigSpositive;
+		private float[] bigSnegative;
 		private float[] weights;
 		private float[] positive;
 		private	float[] negative;
@@ -51,6 +59,9 @@ namespace mytopsis
 			matrix = new List<List<TextBox>> ();
 			rowNegative = new List<TextBox> ();
 			rowPositive = new List<TextBox> ();
+			columnSPositive = new List<TextBox> ();
+			columnSNegative = new List<TextBox> ();
+			columnC = new List<TextBox> ();
 			offsetRowHeader = new Point (20, 150);
 			offsetColumnWeight = new Point (100, 120);
 			offsetColumnStatus = new Point (140, 120);
@@ -111,6 +122,12 @@ namespace mytopsis
 			btnStep4.Size = new Size (50, 30);
 			btnStep4.Text = "step 4";
 			btnStep4.Enabled = false;
+			btnStep5 = new Button ();
+			btnStep5.Parent = this;
+			btnStep5.Location = new Point (430, 20);
+			btnStep5.Size = new Size (50, 30);
+			btnStep5.Text = "step 5";
+			btnStep5.Enabled = false;
 		}
 
 		void bindEvents ()
@@ -177,6 +194,48 @@ namespace mytopsis
 					columnStatus.Add(ck);
 				}
 
+				Point offsetBigSPositive = new Point(offsetColumnHeader.X, offsetMatrix.Y);
+				Point offsetBigSNegative = new Point(offsetColumnHeader.X+80, offsetMatrix.Y);
+				Point offsetBigC = new Point(offsetColumnHeader.X+160, offsetMatrix.Y);
+				Label spositive = new Label();
+				spositive.Parent = this;
+				spositive.Text = "S ideal";
+				spositive.Location = offsetColumnWeight;
+				spositive.Size = new Size(40,30);
+				offsetColumnWeight.X += 80;
+				Label snegative = new Label();
+				snegative.Parent = this;
+				snegative.Text = "S neg. ideal";
+				snegative.Location = offsetColumnWeight;
+				snegative.Size = new Size(40,30);
+				offsetColumnWeight.X += 80;
+				Label lblC = new Label();
+				lblC.Parent = this;
+				lblC.Text = "C";
+				lblC.Location = offsetColumnWeight;
+				lblC.Size = new Size(40,30);
+
+				for (int i = 0; i < numrows; i++) {
+					TextBox newTxt = new TextBox();
+					newTxt.Parent = this;
+					newTxt.Location = offsetBigSPositive;
+					newTxt.Size = new Size(70,30);
+					columnSPositive.Add(newTxt);
+					offsetBigSPositive.Y += 40;
+					TextBox newTxt2 = new TextBox();
+					newTxt2.Parent = this;
+					newTxt2.Location = offsetBigSNegative;
+					newTxt2.Size = new Size(70,30);
+					columnSNegative.Add(newTxt2);
+					offsetBigSNegative.Y += 40;
+					TextBox newC = new TextBox();
+					newC.Parent = this;
+					newC.Location = offsetBigC;
+					newC.Size = new Size(70,30);
+					columnC.Add(newC);
+					offsetBigC.Y += 40;
+				}
+
 				for(int i = 0; i < numrows; i++){
 					List<TextBox> newRow = new List<TextBox>();
 					for(int j = 0; j < numcols; j++){
@@ -212,6 +271,8 @@ namespace mytopsis
 					rowNegative.Add(newTxt);
 					offsetMatrix.X += 80;
 				}
+
+
 			};
 
 			btnLockHdr.Click += (object sender, EventArgs e) => {
@@ -234,11 +295,21 @@ namespace mytopsis
 				foreach (TextBox t in rowNegative)
 					t.ReadOnly = !t.ReadOnly;
 
+				foreach (TextBox t in columnC)
+					t.ReadOnly = !t.ReadOnly;
+
+				foreach (TextBox t in columnSPositive)
+					t.ReadOnly = !t.ReadOnly;
+
+				foreach (TextBox t in columnSNegative)
+					t.ReadOnly = !t.ReadOnly;
+
 				btnLockHdr.Text = isHeaderLocked ? "unlock" : "lock";
 				btnStep1.Enabled = !btnStep1.Enabled;
 				btnStep2.Enabled = !btnStep2.Enabled;
 				btnStep3.Enabled = !btnStep3.Enabled;
 				btnStep4.Enabled = !btnStep4.Enabled;
+				btnStep5.Enabled = !btnStep5.Enabled;
 				foreach (List<TextBox> r in matrix)
 					foreach(TextBox t in r)
 						t.ReadOnly = !t.ReadOnly;
@@ -292,7 +363,33 @@ namespace mytopsis
 			};
 
 			btnStep4.Click += (object sender, EventArgs e) => {
-				
+				matrixStep4Positive = new float[rowHeader.Count,columnHeader.Count];
+				matrixStep4Negative = new float[rowHeader.Count,columnHeader.Count];
+				for (int i = 0; i < rowHeader.Count; i++)
+					for (int j = 0; j < columnHeader.Count; j++) {
+					matrixStep4Positive[i,j] = (float)Math.Pow(positive[j] - matrixStep2[i,j], 2);
+					matrixStep4Negative[i,j] = (float)Math.Pow(negative[j] - matrixStep2[i,j], 2);
+					}
+
+				bigSpositive = new float[rowHeader.Count];
+				bigSnegative = new float[rowHeader.Count];
+				for (int i = 0; i < rowHeader.Count; i++)
+					for (int j = 0; j < columnHeader.Count; j++) {
+					bigSpositive[i] += matrixStep4Positive[i,j];
+					bigSnegative[i] += matrixStep4Negative[i,j];
+				}
+
+				for (int i = 0; i < rowHeader.Count; i++){
+					bigSpositive[i] = (float)Math.Sqrt(bigSpositive[i]);
+					columnSPositive[i].Text = bigSpositive[i].ToString();
+					bigSnegative[i] = (float)Math.Sqrt(bigSnegative[i]);
+					columnSNegative[i].Text = bigSnegative[i].ToString();
+				}
+			};
+
+			btnStep5.Click += (object sender, EventArgs e) => {
+				for (int i = 0; i < rowHeader.Count; i++)
+					columnC[i].Text = (bigSnegative[i]/(bigSpositive[i] + bigSnegative[i])).ToString();
 			};
 		}
 
