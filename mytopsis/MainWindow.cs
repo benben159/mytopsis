@@ -1,10 +1,9 @@
 using System;
 using System.Linq;
-using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections.Generic;
-using Mono.Data.Sqlite;
+
 namespace mytopsis
 {
 	public class MainWindow : Form
